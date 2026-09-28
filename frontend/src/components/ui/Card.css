@@ -1,0 +1,21 @@
+.ui-card {
+  border: 1px solid var(--color-border);
+}
+
+.ui-card--level-1 {
+  background: var(--color-surface-1);
+  border-radius: var(--radius-xl);
+  padding: var(--space-5);
+}
+
+.ui-card--level-2 {
+  background: var(--color-surface-2);
+  border-radius: var(--radius-lg);
+  padding: var(--space-4);
+}
+
+.ui-card--level-3 {
+  background: var(--color-surface-3);
+  border-radius: var(--radius-md);
+  padding: var(--space-3);
+}

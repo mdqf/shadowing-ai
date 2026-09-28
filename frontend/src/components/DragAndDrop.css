@@ -1,0 +1,130 @@
+/* components/DragAndDrop.css */
+.drag-and-drop {
+    width: 100%;
+    height: 100%;
+    border: 2px dashed #ccc;
+    border-radius: 12px;
+    padding: 40px 20px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    background-color: #1b202a;
+    min-height: 200px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+}
+
+.player-label:has(.drag-and-drop[aria-label*="subtitle"]) {
+  width: 25%;
+}
+
+.player-label:has(.drag-and-drop[aria-label*="video"]) {
+  width: 75%;
+}
+
+.drag-and-drop:hover {
+    border-color: #888;
+    background-color: #1f2239;
+}
+
+.drag-and-drop.dragging {
+    border: 2px solid;
+    border-color: #4a90d9;
+    background-color: #072066;
+    transform: scale(1.02);
+    box-shadow: 0 8px 24px rgba(74, 144, 217, 0.15);
+}
+
+.drag-and-drop.has-error {
+    border-color: #f44336;
+    background-color: #2c0808;
+}
+
+.drag-and-drop .drop-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    color: #666;
+}
+
+.drag-and-drop .drop-content .drop-icon {
+    font-size: 48px;
+    margin-bottom: 16px;
+}
+
+.drag-and-drop .drop-content p {
+    margin: 8px 0 4px 0;
+    font-size: 18px;
+    font-weight: 500;
+    color: #fff;
+}
+
+.drag-and-drop .drop-content small {
+    color: #999;
+    font-size: 14px;
+}
+
+.drag-and-drop .drop-content .file-types {
+    margin-top: 8px;
+    padding: 4px 12px;
+    background-color: #e8e8e8;
+    border-radius: 20px;
+    font-size: 13px;
+    color: #555;
+    font-weight: 500;
+}
+
+.drag-and-drop .drop-content .file-size-limit {
+    font-size: 12px;
+    color: #999;
+    margin-top: 2px;
+}
+
+.drag-and-drop .drop-content .multiple-files {
+    font-size: 13px;
+    color: #4a90d9;
+    margin-top: 4px;
+    font-weight: 500;
+}
+
+/* استایل خطا */
+.drag-and-drop .drop-error {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    color: #d32f2f;
+}
+
+.drag-and-drop .drop-error span {
+    font-size: 42px;
+}
+
+.drag-and-drop .drop-error p {
+    margin: 4px 0;
+    font-size: 16px;
+    font-weight: 500;
+}
+
+.drag-and-drop .drop-error small {
+    color: #999;
+    font-size: 14px;
+}
+
+/* وقتی فایل آپلود شده */
+.drag-and-drop.has-file {
+    border-color: #4caf50;
+    background-color: #f0f8f0;
+}
+
+/* افکت ریپل هنگام کلیک */
+.drag-and-drop:active:not(.dragging) {
+    transform: scale(0.98);
+}
+
+.drag-and-drop .drop-content,
+.drag-and-drop .drop-error {
+  pointer-events: none;
+}

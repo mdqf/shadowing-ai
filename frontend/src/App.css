@@ -1,0 +1,1429 @@
+/* ==========================================================================
+   Global Reset & Base Styles
+   ========================================================================== */
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+  background-color: #0d0f12;
+  color: #e6e8ec;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* ==========================================================================
+   App Layout & Shell Container
+   ========================================================================== */
+.app {
+  width: 100%;
+  height: 100vh;
+  margin: 0 auto;
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+/* ==========================================================================
+   Header Section
+   ========================================================================== */
+header {
+  margin-bottom: 20px;
+  padding-left: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  text-align: left;
+  flex-shrink: 0;
+}
+
+header h1 {
+  margin: 0 0 4px 0;
+  font-size: 26px;
+  font-weight: 700;
+  letter-spacing: -0.5px;
+  background: linear-gradient(135deg, #ffffff 0%, #a5b4fc 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+header p {
+  margin: 0;
+  font-size: 14px;
+  color: #94a3b8;
+  font-weight: 500;
+}
+
+.header-left {
+  display: flex;
+  gap: 16px;
+}
+
+/* ==========================================================================
+   Upload Inputs Section
+   ========================================================================== */
+.upload-section {
+  display: flex;
+  gap: 16px;
+}
+
+.upload-section div {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 12px 18px;
+  background: #181b20;
+  align-items: flex-start;
+  border-radius: 14px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  transition: border-color 0.2s ease, background 0.2s ease;
+}
+
+.upload-section div:hover {
+  background: #1f232b;
+  border-color: rgba(255, 255, 255, 0.15);
+}
+
+.upload-section label {
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: #818cf8;
+}
+
+.upload-section input[type="file"] {
+  font-size: 13px;
+  color: #cbd5e1;
+  cursor: pointer;
+}
+
+.upload-section input[type="file"]::-webkit-file-upload-button {
+  background: #2d3748;
+  color: #fff;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  margin-right: 10px;
+  font-size: 12px;
+  transition: background 0.2s ease;
+}
+
+.upload-section input[type="file"]::-webkit-file-upload-button:hover {
+  background: #4a5568;
+}
+
+/* ==========================================================================
+   Main Content Layout (Player + Subtitles)
+   ========================================================================== */
+.player-section {
+  display: flex;
+  background: #14171d;
+  padding: 20px;
+  border-radius: 20px;
+  gap: 20px;
+  flex: 1;
+  min-height: 0;
+  height: 0;
+  overflow: hidden;
+  align-items: stretch;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+}
+
+.player-label {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+}
+
+.player {
+  flex: 0 0 75%;
+  width: 75%;
+  max-width: 75%;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  overflow-y: auto;
+  padding-right: 8px;
+  position: relative;
+  /* Enables timeline-based scroll animations */
+  scroll-timeline: --player-scroll block;
+}
+
+/* Container for video to handle sticky position and scaling */
+.video-container {
+  position: sticky;
+  top: 0;
+  z-index: 30;
+  width: 100%;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.6);
+  background: #000;
+  margin-bottom: 20px;
+  flex-shrink: 0;
+  /* Prevents container from collapsing to 0 height */
+  transform-origin: center top;
+  /* Scales down towards top center */
+
+  /* Link animation to container scroll with proper range */
+  animation: shrinkVideo linear both;
+  animation-timeline: --player-scroll;
+  animation-range: 0px 150px;
+}
+
+video {
+  width: 100%;
+  height: auto;
+  aspect-ratio: 16 / 9;
+  /* Ensures video preserves 16:9 height natively */
+  max-height: 480px;
+  background: #000;
+  display: block;
+  object-fit: contain;
+}
+
+/* Glassmorphism Blur Overlay on top of the video when scrolled */
+.video-blur-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(20, 23, 29, 0.75);
+  border-radius: 16px;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  pointer-events: none;
+  opacity: 0;
+
+  /* Link opacity to scroll timeline */
+  animation: blurOverlay linear both;
+  animation-timeline: --player-scroll;
+  animation-range: 20px 120px;
+}
+
+/* Scroll Animation Keyframes */
+@keyframes shrinkVideo {
+  from {
+    transform: scale(1);
+    border-radius: 16px;
+  }
+
+  to {
+    transform: scale(0.85);
+    border-radius: 12px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.8);
+  }
+}
+
+@keyframes blurOverlay {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+/* Content elements below video need lower z-index so video stays on top */
+.subtitle-display,
+.controls,
+.voice-recorder-dashboard,
+.shadowing-result {
+  position: relative;
+  z-index: 99;
+}
+
+/* Active Subtitle Display Panel */
+.subtitle-display {
+  text-align: center;
+  font-size: 20px;
+  font-weight: 600;
+  line-height: 1.5;
+  padding: 16px 20px;
+  min-height: 72px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 14px;
+  margin: 16px 0;
+  color: #f1f5f9;
+  user-select: text;
+}
+
+/* Player Action Controls */
+.controls {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+button {
+  padding: 10px 22px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 10px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 600;
+  background: #212631;
+  color: #e2e8f0;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+button:hover {
+  background: #2d3545;
+  color: #ffffff;
+  border-color: #6366f1;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(99, 102, 241, 0.25);
+}
+
+button:active {
+  transform: translateY(0);
+}
+
+/* ==========================================================================
+   Subtitle List Panel (25% Desktop Width)
+   ========================================================================== */
+.subtitle-section {
+  flex: 0 0 calc(25% - 20px);
+  width: calc(25% - 20px);
+  max-width: calc(25% - 20px);
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 0;
+  overflow: hidden;
+  background: rgba(0, 0, 0, 0.2);
+  padding: 16px;
+  border-radius: 14px;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.subtitle-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 14px;
+}
+
+.subtitle-section h2 {
+  text-align: left;
+  flex-shrink: 0;
+  margin: 0;
+  font-size: 16px;
+  font-weight: 700;
+  color: #cbd5e1;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.subtitle-selector {
+  display: flex;
+}
+
+.subtitle-selector select {
+  display: flex;
+  font-size: 10px;
+  padding: 3px 5px;
+  background: #446ff8;
+  border-radius: 5px;
+  border: unset;
+}
+
+.subtitle-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  overflow-y: auto;
+  flex: 1;
+  min-height: 0;
+  padding-right: 4px;
+}
+
+/* Individual Subtitle Row */
+.subtitle {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  padding: 10px 12px;
+  cursor: pointer;
+  border-radius: 10px;
+  color: #94a3b8;
+  text-align: left;
+  flex-shrink: 0;
+  background: transparent;
+  transition: all 0.2s ease;
+  border: 1px solid transparent;
+}
+
+.subtitle:hover {
+  background: rgba(255, 255, 255, 0.05);
+  color: #e2e8f0;
+}
+
+.subtitle.active {
+  background: rgba(99, 102, 241, 0.15);
+  color: #ffffff;
+  border-color: rgba(99, 102, 241, 0.4);
+}
+
+.subtitle span {
+  color: #64748b;
+  min-width: 24px;
+  font-size: 12px;
+  font-weight: 900;
+  margin-top: 2px;
+}
+
+.subtitle.active span {
+  color: #818cf8;
+}
+
+.subtitle p {
+  margin: 0;
+  font-size: 16px;
+  line-height: 1.4;
+}
+
+/* ==========================================================================
+   Shadowing & Voice Recording Results
+   ========================================================================== */
+.shadowing-result {
+  margin-top: 20px;
+  padding: 20px;
+  border-radius: 16px;
+  background: #1a1e26;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25);
+}
+
+.shadowing-result h3 {
+  margin-top: 0;
+  font-size: 16px;
+  font-weight: 600;
+  color: #f1f5f9;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  padding-bottom: 10px;
+  margin-bottom: 16px;
+}
+
+.accuracy {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: 16px 0;
+  padding: 16px;
+  background: rgba(0, 0, 0, 0.25);
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.04);
+}
+
+.accuracy strong {
+  font-size: 44px;
+  font-weight: 800;
+  background: linear-gradient(135deg, #10b981, #34d399);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.accuracy span {
+  font-size: 12px;
+  color: #94a3b8;
+  margin-top: 2px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* Word Level Analysis Badges */
+.word-results,
+.pronunciation-words {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 16px 0;
+}
+
+.word-result,
+.pronunciation-word {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border-radius: 8px;
+  background: #252a36;
+  font-size: 13px;
+  font-weight: 500;
+  transition: transform 0.15s ease;
+}
+
+.word-result:hover,
+.pronunciation-word:hover {
+  transform: translateY(-1px);
+}
+
+/* Badge Accuracy Statuses */
+.word-result.correct,
+.pronunciation-word.good {
+  border: 1px solid #10b981;
+  background: rgba(16, 185, 129, 0.12);
+  color: #6ee7b7;
+}
+
+.word-result.replaced,
+.pronunciation-word.ok {
+  border: 1px solid #f59e0b;
+  background: rgba(245, 158, 11, 0.12);
+  color: #fcd34d;
+}
+
+.word-result.missing,
+.word-result.extra,
+.pronunciation-word.poor {
+  border: 1px solid #ef4444;
+  background: rgba(239, 68, 68, 0.12);
+  color: #fca5a5;
+}
+
+.pronunciation-word.unknown {
+  border: 1px dashed rgba(255, 255, 255, 0.2);
+  background: rgba(255, 255, 255, 0.03);
+  color: #64748b;
+}
+
+.transcription {
+  margin-top: 16px;
+}
+
+.transcription p {
+  margin-bottom: 6px;
+  font-size: 14px;
+  color: #cbd5e1;
+}
+
+.statistics {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 16px;
+  font-size: 13px;
+  color: #94a3b8;
+  padding: 10px 14px;
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 8px;
+}
+
+.pronunciation-analysis {
+  margin-top: 20px;
+}
+
+.pronunciation-hint {
+  margin-top: 16px;
+  font-size: 12px;
+  color: #64748b;
+  font-style: italic;
+}
+
+/* ==========================================================================
+   VoiceRecorder UI Dashboard Styles
+   ========================================================================== */
+
+.voice-recorder-dashboard {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  width: 100%;
+  margin-top: 10px;
+}
+
+/* Target Sentence Header Card */
+.target-sentence-card {
+  background: #181c24;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
+  padding: 16px;
+  text-align: center;
+}
+
+.section-label {
+  font-size: 10px;
+  letter-spacing: 1px;
+  color: #6366f1;
+  font-weight: 700;
+}
+
+.expected-text {
+  margin: 6px 0 0 0;
+  font-size: 18px;
+  color: #f1f5f9;
+  font-weight: 600;
+}
+
+/* Action Bar & Buttons */
+.action-bar-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px 16px;
+  background: #1e232d;
+  padding: 12px 16px;
+  border-radius: 12px;
+}
+
+.listen-toggle {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  color: #94a3b8;
+  cursor: pointer;
+  user-select: none;
+  width: 100%;
+  order: -1;
+}
+
+.listen-toggle input {
+  width: 15px;
+  height: 15px;
+  accent-color: #6366f1;
+  cursor: pointer;
+}
+
+.btn-record {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  font-weight: 700;
+  padding: 10px 20px;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-record.start {
+  background: #6366f1;
+  color: #ffffff;
+  box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
+}
+
+.btn-record.start:hover {
+  background: #4f46e5;
+}
+
+.btn-record.stop {
+  background: #ef4444;
+  color: #ffffff;
+}
+
+.recording-controls {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.btn-record.cancel {
+  background: transparent;
+  color: #94a3b8;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  padding: 10px 16px;
+}
+
+.btn-record.cancel:hover {
+  background: rgba(255, 255, 255, 0.06);
+  color: #e2e8f0;
+}
+
+.audio-player-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 12px;
+  color: #94a3b8;
+}
+
+.audio-player-wrapper audio {
+  height: 36px;
+}
+
+/* Tabs System */
+.tabs-navigation {
+  display: flex;
+  justify-content: space-between;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  padding-bottom: 10px;
+  margin-bottom: 16px;
+}
+
+.tabs-navigation div {
+  display: flex;
+  gap: 8px;
+}
+
+.tab-btn {
+  background: transparent;
+  border: none;
+  color: #94a3b8;
+  padding: 8px 14px;
+  font-size: 13px;
+  font-weight: 600;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.tab-btn.active {
+  background: rgba(99, 102, 241, 0.15);
+  color: #818cf8;
+}
+
+/* Export JSON Button */
+.tab-pane-header {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 12px;
+}
+
+.export-json-btn {
+  background: rgba(99, 102, 241, 0.12);
+  border: 1px solid rgba(99, 102, 241, 0.35);
+  color: #818cf8;
+  padding: 6px 12px;
+  font-size: 12px;
+  font-weight: 600;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+
+.export-json-btn:hover {
+  background: rgba(99, 102, 241, 0.22);
+}
+
+/* Overview Layout */
+.overview-top-grid {
+  display: grid;
+  grid-template-columns: 130px 1fr;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.accuracy-badge-card {
+  background: #181c24;
+  border: 1px solid rgba(16, 185, 129, 0.2);
+  border-radius: 12px;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.accuracy-val {
+  font-size: 32px;
+  font-weight: 800;
+  color: #10b981;
+}
+
+.transcription-card {
+  background: #181c24;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 12px;
+  padding: 16px;
+}
+
+.transcription-card h4 {
+  margin: 0 0 8px 0;
+  font-size: 13px;
+  color: #94a3b8;
+}
+
+.transcription-text p {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 600;
+  color: #f1f5f9;
+}
+
+/* Badges & Tags */
+.stats-badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 12px;
+}
+
+.badge {
+  font-size: 11px;
+  padding: 3px 8px;
+  border-radius: 4px;
+  font-weight: 600;
+}
+
+.badge.success {
+  background: rgba(16, 185, 129, 0.15);
+  color: #34d399;
+}
+
+.badge.danger {
+  background: rgba(239, 68, 68, 0.15);
+  color: #fca5a5;
+}
+
+.badge.warning {
+  background: rgba(245, 158, 11, 0.15);
+  color: #fcd34d;
+}
+
+.badge.info {
+  background: rgba(59, 130, 246, 0.15);
+  color: #60a5fa;
+}
+
+/* Word Results Grid */
+.words-breakdown-card {
+  background: #181c24;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 12px;
+  padding: 16px;
+}
+
+.word-results {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.word-result {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  padding: 6px 12px;
+  border-radius: 6px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.word-result.correct {
+  border-color: rgba(16, 185, 129, 0.4);
+}
+
+.word-result.missing {
+  border-color: rgba(239, 68, 68, 0.4);
+}
+
+/* 2-Column Grid for Analytics */
+.grid-2-col {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.analytics-card {
+  background: #181c24;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 12px;
+  padding: 16px;
+}
+
+.data-rows div {
+  display: flex;
+  justify-content: space-between;
+  padding: 6px 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+  font-size: 13px;
+}
+
+.data-rows span {
+  color: #64748b;
+}
+
+.data-rows strong {
+  color: #e2e8f0;
+}
+
+/* Phoneme Grid */
+.phoneme-results {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.phoneme-result {
+  background: #181c24;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  padding: 8px 12px;
+  border-radius: 6px;
+  text-align: center;
+}
+
+/* ==========================================================================
+   Custom Auto-Hiding Scrollbars
+   ========================================================================== */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: transparent;
+  border-radius: 8px;
+  transition: background 0.3s ease;
+}
+
+*:hover::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.15);
+}
+
+*:hover::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.35);
+}
+
+/* Firefox Scrollbar Support */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: transparent transparent;
+  transition: scrollbar-color 0.3s ease;
+}
+
+*:hover {
+  scrollbar-color: rgba(255, 255, 255, 0.15) transparent;
+}
+/* Pronunciation Analysis V2 */
+.pronunciation-v2-summary {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+  margin-top: 16px;
+}
+
+.pronunciation-v2-summary > div {
+  background: #181c24;
+  border: 1px solid rgba(255,255,255,0.06);
+  border-radius: 10px;
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.pronunciation-v2-summary span {
+  color: #64748b;
+  font-size: 12px;
+}
+
+.pronunciation-v2-summary strong {
+  color: #e2e8f0;
+  font-size: 18px;
+}
+
+.pronunciation-v2-list {
+  display: grid;
+  gap: 10px;
+  margin-top: 16px;
+}
+
+.pronunciation-v2-item {
+  background: #181c24;
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 10px;
+  padding: 12px;
+}
+
+.pronunciation-v2-head,
+.pronunciation-v2-meta {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.pronunciation-v2-head {
+  justify-content: space-between;
+}
+
+.pronunciation-v2-head strong {
+  font-size: 18px;
+}
+
+.pronunciation-v2-meta {
+  margin-top: 7px;
+  color: #94a3b8;
+  font-size: 12px;
+}
+
+.pronunciation-v2-item p {
+  margin: 8px 0 0;
+  color: #cbd5e1;
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+@media (max-width: 700px) {
+  .pronunciation-v2-summary {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* Word-by-Word Breakdown */
+.word-breakdown {
+  margin-top: 16px;
+}
+
+.word-breakdown h4 {
+  margin: 0 0 10px;
+  font-size: 13px;
+  color: #94a3b8;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.word-breakdown-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.word-breakdown-item {
+  background: #181c24;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-left: 3px solid rgba(255, 255, 255, 0.2);
+  border-radius: 8px;
+  padding: 10px 14px;
+  min-width: 130px;
+  flex: 1 1 160px;
+}
+
+.word-breakdown-item.good {
+  border-left-color: #34d399;
+}
+
+.word-breakdown-item.needs_work {
+  border-left-color: #fcd34d;
+}
+
+.word-breakdown-item.error {
+  border-left-color: #fca5a5;
+}
+
+.word-breakdown-item.unscored {
+  border-left-color: rgba(255, 255, 255, 0.2);
+  opacity: 0.7;
+}
+
+.word-breakdown-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.word-breakdown-head strong {
+  font-size: 15px;
+  color: #e2e8f0;
+}
+
+.word-breakdown-score {
+  font-size: 13px;
+  font-weight: 600;
+  color: #94a3b8;
+}
+
+.word-breakdown-issues {
+  list-style: none;
+  margin: 8px 0 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.word-breakdown-issues li {
+  font-size: 12px;
+  color: #cbd5e1;
+}
+
+.word-breakdown-l1-tip {
+  margin: 4px 0 0;
+  padding: 6px 8px;
+  background: rgba(99, 102, 241, 0.08);
+  border-radius: 6px;
+  color: #a5b4fc;
+  font-size: 11.5px;
+  line-height: 1.6;
+  direction: rtl;
+  text-align: right;
+}
+
+.word-breakdown-note {
+  display: block;
+  margin-top: 8px;
+  font-size: 12px;
+  color: #64748b;
+  font-style: italic;
+}
+
+/* ==========================================================================
+   BoldVoice-style Sentence Pronunciation View
+   ========================================================================== */
+.sentence-view {
+  margin-top: 16px;
+  padding: 22px 24px;
+  background: #181c24;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 14px;
+}
+
+.sentence-view-label {
+  font-size: 11px;
+  color: #6366f1;
+  font-weight: 700;
+  letter-spacing: 1px;
+  margin-bottom: 18px;
+  text-transform: uppercase;
+}
+
+.sentence-flow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 18px 14px;
+  align-items: baseline;
+  line-height: 1.4;
+}
+
+.word-text {
+  font-size: 24px;
+  font-weight: 600;
+  color: #e2e8f0;
+  white-space: nowrap;
+}
+
+/* حرفی که فونمش مشکل دارد */
+.problematic-letter {
+  text-decoration: underline;
+  text-decoration-thickness: 2.5px;
+  text-underline-offset: 5px;
+  text-decoration-color: #f59e0b;
+  cursor: help;
+  border-radius: 3px;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+
+.problematic-letter:hover {
+  background: rgba(99, 102, 241, 0.28);
+  color: #ffffff;
+}
+
+.problematic-letter.moderate  { text-decoration-color: #f59e0b; }
+.problematic-letter.severe,
+.problematic-letter.uncertain { text-decoration-color: #ef4444; }
+.problematic-letter.mild      { text-decoration-color: #fcd34d; }
+
+/* Fixed-position tooltip portal */
+.phoneme-tooltip-portal {
+  position: fixed;
+  z-index: 9999;
+  width: 300px;
+  max-width: calc(100vw - 24px);
+  padding: 12px 14px;
+  background: #0b0e13;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 10px;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.75);
+  pointer-events: auto;
+  font-family: system-ui, -apple-system, sans-serif;
+  font-size: 13px;
+  color: #e2e8f0;
+  transition: opacity 0.12s ease;
+}
+
+.phoneme-tooltip-portal.top {
+  transform: translate(-50%, calc(-100% - 10px));
+}
+
+.phoneme-tooltip-portal.bottom {
+  transform: translate(-50%, 10px);
+}
+
+.phoneme-tooltip-portal.top::after {
+  content: '';
+  position: absolute;
+  top: 100%;
+  left: var(--arrow-x, 50%);
+  transform: translateX(-50%);
+  border: 6px solid transparent;
+  border-top-color: #0b0e13;
+}
+
+.phoneme-tooltip-portal.bottom::after {
+  content: '';
+  position: absolute;
+  bottom: 100%;
+  left: var(--arrow-x, 50%);
+  transform: translateX(-50%);
+  border: 6px solid transparent;
+  border-bottom-color: #0b0e13;
+}
+
+.tooltip-phoneme-compare {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: 'SF Mono', 'Menlo', 'Courier New', monospace;
+  font-size: 14px;
+  margin-bottom: 6px;
+}
+
+.tooltip-phoneme-expected {
+  padding: 3px 9px;
+  border-radius: 5px;
+  background: rgba(99, 102, 241, 0.18);
+  color: #a5b4fc;
+  font-weight: 700;
+}
+
+.tooltip-phoneme-actual {
+  padding: 3px 9px;
+  border-radius: 5px;
+  background: rgba(239, 68, 68, 0.18);
+  color: #fca5a5;
+  font-weight: 700;
+}
+
+.tooltip-phoneme-missing {
+  padding: 3px 9px;
+  border-radius: 5px;
+  background: rgba(239, 68, 68, 0.18);
+  color: #fca5a5;
+  font-style: italic;
+}
+
+.tooltip-arrow {
+  color: #64748b;
+  font-weight: 700;
+}
+
+.tooltip-score {
+  margin-left: auto;
+  font-size: 12px;
+  font-weight: 700;
+  color: #94a3b8;
+}
+
+.tooltip-reason {
+  margin: 8px 0 0;
+  font-size: 12px;
+  line-height: 1.55;
+  color: #94a3b8;
+}
+
+.tooltip-tip {
+  margin: 8px 0 0;
+  padding: 8px 10px;
+  font-size: 12px;
+  line-height: 1.65;
+  border-radius: 6px;
+  background: rgba(99, 102, 241, 0.1);
+  color: #a5b4fc;
+  direction: rtl;
+  text-align: right;
+}
+
+.tooltip-play-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  width: 100%;
+  margin-top: 8px;
+  padding: 7px 10px;
+  font-size: 12px;
+  font-weight: 600;
+  border-radius: 6px;
+  border: 1px solid rgba(52, 211, 153, 0.35);
+  background: rgba(52, 211, 153, 0.12);
+  color: #6ee7b7;
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+
+.tooltip-play-btn:hover {
+  background: rgba(52, 211, 153, 0.22);
+}
+
+/* ==========================================================================
+   Responsive: Tablet & Mobile
+   ========================================================================== */
+
+/* Tablet and below: the app was built as a fixed-height, no-scroll,
+   two-column (video + subtitle sidebar) desktop layout. Below this
+   width that layout physically doesn't fit, so it switches to a
+   normal scrolling, single-column page. */
+@media (max-width: 900px) {
+  .app {
+    height: auto;
+    min-height: 100vh;
+    overflow: visible;
+    padding: 16px;
+  }
+
+  .player-section {
+    flex-direction: column;
+    height: auto;
+    overflow: visible;
+  }
+
+  .player {
+    width: 100%;
+    max-width: 100%;
+    flex: 1 1 auto;
+    overflow-y: visible;
+    padding-right: 0;
+  }
+
+  .subtitle-section {
+    width: 100% !important;
+    max-width: 100% !important;
+    flex: 1 1 auto;
+  }
+
+  header {
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+
+  video {
+    max-height: 320px;
+  }
+}
+
+/* Phone: tighten spacing/typography and stack anything still using a
+   fixed side-by-side layout. */
+@media (max-width: 600px) {
+  .app {
+    padding: 12px;
+  }
+
+  header h1 {
+    font-size: 20px;
+  }
+
+  header p {
+    font-size: 12px;
+  }
+
+  .header-left {
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+
+  .player-section,
+  .voice-recorder-dashboard,
+  .target-sentence-card {
+    padding: 14px;
+    border-radius: 14px;
+  }
+
+  video {
+    max-height: 220px;
+  }
+
+  .controls {
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .controls button {
+    flex: 1 1 30%;
+    min-height: 40px;
+  }
+
+  .overview-top-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .action-bar-card {
+    padding: 12px;
+  }
+
+  .recording-controls {
+    width: 100%;
+    flex-wrap: wrap;
+  }
+
+  .btn-record {
+    flex: 1 1 auto;
+    justify-content: center;
+    min-height: 44px;
+  }
+
+  .audio-player-wrapper {
+    width: 100%;
+    flex-wrap: wrap;
+  }
+
+  .audio-player-wrapper audio {
+    width: 100%;
+  }
+
+  .word-breakdown-item {
+    min-width: 100%;
+  }
+
+  .tabs-navigation {
+    flex-wrap: wrap;
+  }
+
+  .tab-btn {
+    flex: 1 1 auto;
+    min-height: 40px;
+  }
+
+  .export-json-btn {
+    width: 100%;
+    min-height: 40px;
+  }
+
+  /* Sentence view text: allow it to wrap naturally and keep letters
+     large enough to comfortably tap. */
+  .sentence-view {
+    font-size: 18px;
+    line-height: 2;
+  }
+
+  .problematic-letter {
+    min-width: 14px;
+    display: inline-block;
+  }
+
+  .phoneme-tooltip-portal {
+    width: calc(100vw - 24px);
+  }
+}
